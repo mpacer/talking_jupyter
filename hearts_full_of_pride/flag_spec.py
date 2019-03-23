@@ -1,3 +1,6 @@
+
+from vdom.svg import circle, path, rect, svg, g as group, animate, text, clipPath
+
 trans = {"colors":['lightskyblue', 'lightpink', 'white',  'lightpink', 'lightskyblue'],
          "name":"trans",}
 
@@ -12,7 +15,7 @@ genderqueer = {"colors":['purple', 'white', 'forestgreen'],
 pride = {"colors":['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'brown', 'black'], 
          "name": "pride",}
 
-agender = {"colors":['black', 'lightgrey', 'white', 'chartreuse', 'white', 'lightgrey', 'black']
+agender = {"colors":['black', 'lightgrey', 'white', 'chartreuse', 'white', 'lightgrey', 'black'],
            "name": "agender",}
 
 ace = {"colors":['black','lightgrey','white', 'purple'], 
@@ -41,7 +44,7 @@ lipstick = {"colors":["#A60061", "#B95393", "#D260A7", "#EDEDEB", "#E5ABD0", "#C
 
 
 
-polyamory = {"colors":["blue", "red", "black"]
+polyamory = {"colors":["blue", "red", "black"],
              "name": "polyamory",}
 
 bear = {"colors": ["#623804", "chocolate", "#fedd63", "moccasin", "white", "dimgray", "black"], 
