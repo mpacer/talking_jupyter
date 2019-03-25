@@ -18,14 +18,14 @@ from uuid import uuid4
 from vdom import VDOM, style
 from vdom.svg import circle, path, rect, svg, g as group, animate, text, clipPath
 
-from IPython.display import display_png, Image
+from IPython.display import display_png, Image, SVG
 
 
 # In[48]:
 
 BASE_DIR = os.path.realpath(os.path.dirname(__file__))
 FLAG_JSON_FILENAME = os.path.join(BASE_DIR, "flag_spec.json")
-
+HEART_ARRAY_JSON_FILENAME = os.path.join(BASE_DIR, "heart_coords.json")
 
 def gen_id():
     return f"{uuid4()}".replace("-","")
@@ -147,6 +147,42 @@ def encode_heart(flag_def, **kwargs):
 def encode_flag(flag_def, **kwargs):
     return Flag(**flag_def).encode()
 
+
+def gen_heart_array(flag_defs):
+    heart = Clip(gen_heart(), clipid="newid")
+    heart_coords = load_heart_coords()
+    flag_list = [heart.clipper()]
+    coord_list = []
+
+    for idx, flag_def in enumerate(flag_defs):
+        x = f"{heart_coords[idx]['x']}"
+        y = f"{int(heart_coords[idx]['y'])+50}"
+        flag = Flag(**flag_def)
+        flag_list.append(
+            svg(
+                text(flag.name, y=f"{-20}", **{'text-anchor': "middle", "font-family": "Minion Pro", "font-size":"15"}),
+                heart.clip(
+                    flag.flag(),
+                ), 
+                x = x,
+                y = y,
+                height="100px",
+                viewBox="-25 -25 50 50",
+                style={"overflow":"visible"},
+                version="1.1",
+                baseProfile="full", 
+                xmlns="http://www.w3.org/2000/svg", 
+                **{"xmlns:xlink":"http://www.w3.org/1999/xlink", 
+                   "xml:space":"preserve"}
+            )
+        )    
+    heart_array = svg(*flag_list, width=f"{90*8}", viewBox="250 0 675 675", 
+                      version="1.1", baseProfile="full", 
+                      xmlns="http://www.w3.org/2000/svg", 
+                      **{"xmlns:xlink":"http://www.w3.org/1999/xlink", 
+                            "xml:space":"preserve"})
+    return heart_array
+
 def write_pngs(flag_defs, base_dir=None, suffix="heart", encoder=None):
     if encoder is None:
         encoder = encode_heart
@@ -160,8 +196,8 @@ def write_pngs(flag_defs, base_dir=None, suffix="heart", encoder=None):
 
 
 
-def get_heart_coords():
-    with open("heart_coords.json", "r") as fp:
+def load_heart_coords():
+    with open(HEART_ARRAY_JSON_FILENAME, "r") as fp:
         heart_coords_json = json.load(fp)
         return heart_coords_json['heart_coords']
 
@@ -257,7 +293,7 @@ def load_flags_iter(flag_json_filename=FLAG_JSON_FILENAME):
         yield name, flag
 
 
-def load_flags(flag_json_filename=FLAG_JSON_FILENAME):
+def load_flag_list(flag_json_filename=FLAG_JSON_FILENAME):
     return list(flag[1] for flag in load_flags_iter(flag_json_filename))
 
 
