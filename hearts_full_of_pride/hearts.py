@@ -154,13 +154,9 @@ def write_pngs(flag_defs, base_dir=None, suffix="heart", encoder=None):
             fp.write(cairosvg.svg2png(encoder(flag), dpi=300, parent_width=400, parent_height=400))
 
 
-# In[61]:
+# In[62]:
 
 
-get_ipython().system('jupyter nbconvert "Tearing my Hearts out into a script.ipynb" --to script --output hearts')
-
-
-# In[51]:
 
 
 def get_heart_coords():
@@ -367,7 +363,7 @@ def gen_fade_out():
     return fade_out()
 
 def animated_heart(stroke_color="white"):
-    return group(gen_heart("blargh", stroke=stroke_color),anim_style)
+    return group(gen_heart("blargh", stroke=stroke_color), anim_style)
 
 def gen_heart_clip():
     heart = Clip(gen_heart())
@@ -400,7 +396,3 @@ def animated_flag_heart(this_flag_name, stroke_color="grey"):
 
 
 # In[ ]:
-
-
-
-
