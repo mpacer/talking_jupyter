@@ -15,13 +15,16 @@ import cairosvg
 
 from uuid import uuid4
 
-from vdom import VDOM
+from vdom import VDOM, style
 from vdom.svg import circle, path, rect, svg, g as group, animate, text, clipPath
 
 from IPython.display import display_png, Image
 
 
 # In[48]:
+
+BASE_DIR = os.path.realpath(os.path.dirname(__file__))
+FLAG_JSON_FILENAME = os.path.join(BASE_DIR, "flag_spec.json")
 
 
 def gen_id():
@@ -82,17 +85,18 @@ class Flag:
                      **{"xmlns:xlink":"http://www.w3.org/1999/xlink", 
                         "xml:space":"preserve"})
         return {**viewer._repr_mimebundle_(None, None),
-                
                 "text/html": viewer._repr_html_(),
                 "image/svg+xml": viewer._repr_html_()
                }
     
     def encode(self, **kwargs):
-        myflag = svg(self.flag(**kwargs), viewBox="-25 -25 50 50", version="1.1",
-            baseProfile="full", 
-            xmlns="http://www.w3.org/2000/svg", 
-            **{"xmlns:xlink":"http://www.w3.org/1999/xlink", 
-               "xml:space":"preserve"})
+        myflag = svg(self.flag(**kwargs),
+                     viewBox="-25 -25 50 50",
+                     version="1.1",
+                     baseProfile="full",
+                     xmlns="http://www.w3.org/2000/svg",
+                     **{"xmlns:xlink": "http://www.w3.org/1999/xlink",
+                        "xml:space": "preserve"})
         return myflag.to_html().encode('utf-8')
     
         
@@ -154,9 +158,6 @@ def write_pngs(flag_defs, base_dir=None, suffix="heart", encoder=None):
             fp.write(cairosvg.svg2png(encoder(flag), dpi=300, parent_width=400, parent_height=400))
 
 
-# In[62]:
-
-
 
 
 def get_heart_coords():
@@ -164,11 +165,6 @@ def get_heart_coords():
         heart_coords_json = json.load(fp)
         return heart_coords_json['heart_coords']
 
-
-# In[52]:
-
-
-# heart_coords = get_heart_coords()
 
 
 # In[53]:
@@ -237,75 +233,21 @@ def get_heart_coords():
 # demigirl = {"colors":["darkgrey", "lightgrey", "lightpink","white", "lightpink", "lightgrey", "darkgrey"], "name": "demigirl"}
 # demiboy = {"colors":["darkgrey", "lightgrey", "lightblue","white", "lightblue", "lightgrey", "darkgrey"], "name": "demiboy"}
 
-# flag_defs = [trans, lesbian, bear, agender, ace, bi, pride, enby, genderfluid, pansexual, polysexual, aromantic, lipstick, genderqueer, intersex, polyamory]
-
-
-# In[54]:
-
-
-# heart = Clip(gen_heart(), clipid="newid")
-# flag_list = [heart.clipper()]
-# coord_list = []
-
-# for idx, flag_def in enumerate(flag_defs):
-#     x = f"{heart_coords[idx]['x']}"
-#     y = f"{int(heart_coords[idx]['y'])+50}"
-#     flag = Flag(**flag_def)
-#     flag_list.append(
-#         svg(
-#             text(flag.name, y=f"{-20}", **{'text-anchor': "middle", "font-family": "Minion Pro", "font-size":"15"}),
-#             heart.clip(
-#                 flag.flag(),
-#             ), 
-#             x = x,
-#             y = y,
-#             height="100px",
-#             viewBox="-25 -25 50 50",
-#             style={"overflow":"visible"},
-#             version="1.1",
-#             baseProfile="full", 
-#             xmlns="http://www.w3.org/2000/svg", 
-#             **{"xmlns:xlink":"http://www.w3.org/1999/xlink", 
-#                "xml:space":"preserve"}
-#         )
-#     )    
-# heart_array = svg(*flag_list, width=f"{90*8}", viewBox="250 0 675 675", 
-#                   version="1.1", baseProfile="full", 
-#                   xmlns="http://www.w3.org/2000/svg", 
-#                   **{"xmlns:xlink":"http://www.w3.org/1999/xlink", 
-#                         "xml:space":"preserve"})
-# from IPython.display import SVG
-# display(SVG(heart_array._repr_html_()), metadata={"filename": "heart_array"})
-
-
-# In[ ]:
-
-
-
-
-
-# In[55]:
-
-
 # flag_json = {entry['name']: entry.to_json() for entry in flag_spec.flag_defs}
 
- 
-def write_flags(flag_defs, flag_json_filename):
+
+def write_flags(flag_defs, flag_json_filename=FLAG_JSON_FILENAME):
     flag_json = {}
     for entry in flag_defs:
         temp_entry = {}
         for key, value in entry.items():
             temp_entry[key] = value.to_json() if isinstance(value, VDOM) else value
-        flag_json[entry['name']]= temp_entry
+        flag_json[entry['name']] = temp_entry
     with open(flag_json_filename, 'w') as fp:
-        json.dump(flag_json, fp)    
+        json.dump(flag_json, fp)
 
 
-# In[56]:
-
-
-from vdom import VDOM
-def load_flags_iter(flag_json_filename):
+def load_flags_iter(flag_json_filename=FLAG_JSON_FILENAME):
     with open(flag_json_filename, 'r') as fp:
         loaded_json = json.load(fp)
     for name, flag in loaded_json.items():
@@ -313,22 +255,15 @@ def load_flags_iter(flag_json_filename):
             if key == "symbol":
                 flag[key] = VDOM.from_dict(json.loads(value))
         yield name, flag
-def load_flags(flag_json_filename):
+
+
+def load_flags(flag_json_filename=FLAG_JSON_FILENAME):
     return list(flag[1] for flag in load_flags_iter(flag_json_filename))
-def load_flag_dict(flag_json_filename):
+
+
+def load_flag_dict(flag_json_filename=FLAG_JSON_FILENAME):
     return dict(load_flags_iter(flag_json_filename))
 
-
-# In[ ]:
-
-
-
-
-
-# In[57]:
-
-
-from vdom import style
 
 def gen_animation_style():
     anim_style = style("""#blargh {
@@ -345,37 +280,34 @@ def gen_animation_style():
     """)
 
     start_anim = animate(attributeName="startOffset", 
-                             dur=f"2s", 
-                             repeatCount="indefinite",
-                             begin="0s",
-                             **{"from": "0%",
-                                "to": "100%"}
+                         dur=f"2s", 
+                         repeatCount="indefinite",
+                         begin="0s",
+                         **{"from": "0%",
+                            "to": "100%"}
                          ) 
     return {"anim_style": anim_style, "start_anim": start_anim}
 
+
 def gen_fade_out():
-    fade_out =  animate(id="animation1",
-                 attributeName="opacity",
-                    dur="3s",
-                    begin="6s",
-                    fill="freeze",
-                 **{"from":"1", "to":"0" })
+    fade_out = animate(id="animation1",
+                       attributeName="opacity",
+                       dur="3s",
+                       begin="6s",
+                       fill="freeze",
+                       **{"from": "1", "to": "0"}
+                       )
     return fade_out()
+
 
 def animated_heart(stroke_color="white"):
     return group(gen_heart("blargh", stroke=stroke_color), anim_style)
 
-def gen_heart_clip():
+
+
+def animated_flag_heart(this_flag, stroke_color="grey"):
+    # this_flag = flag_dict[this_flag_name]
     heart = Clip(gen_heart())
-    return heart
-
-
-# In[58]:
-
-
-def animated_flag_heart(this_flag_name, stroke_color="grey"):
-    this_flag = flag_dict[this_flag_name]
-
     anim_flag_heart = svg(heart.clipper(), 
             heart.clip(
                 Flag(**this_flag).flag()
