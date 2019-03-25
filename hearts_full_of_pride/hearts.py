@@ -297,27 +297,28 @@ def gen_fade_out():
                        fill="freeze",
                        **{"from": "1", "to": "0"}
                        )
-    return fade_out()
+    return fade_out
 
 
 def animated_heart(stroke_color="white"):
-    return group(gen_heart("blargh", stroke=stroke_color), anim_style)
+    anim_styles = gen_animation_style()
+    
+    return group(gen_heart("blargh", stroke=stroke_color), anim_styles['anim_style'])
 
 
 
 def animated_flag_heart(this_flag, stroke_color="grey"):
     # this_flag = flag_dict[this_flag_name]
     heart = Clip(gen_heart())
-    anim_flag_heart = svg(heart.clipper(), 
-            heart.clip(
-                Flag(**this_flag).flag()
-            ),
-            group(Flag(**this_flag).flag(**{"id": "myflag"}), 
-                  animated_heart(stroke_color=stroke_color),
-                  fade_out),
-            viewBox="-25 -25 50 50",
-            height = "450"
-           )
+    fade_out = gen_fade_out()
+    anim_flag_heart = svg(heart.clipper(),
+                          heart.clip(Flag(**this_flag).flag()),
+                          group(Flag(**this_flag).flag(**{"id": "myflag"}),
+                          animated_heart(stroke_color=stroke_color),
+                          fade_out),
+                          viewBox="-25 -25 50 50",
+                          height="450"
+                          )
     return anim_flag_heart
 
 
