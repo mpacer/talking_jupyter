@@ -154,7 +154,7 @@ def gen_heart_array(flag_defs):
     flag_list = [heart.clipper()]
     coord_list = []
 
-    for idx, flag_def in enumerate(flag_defs):
+    for idx, flag_def in enumerate(flag_defs[:len(heart_coords)+1]):
         x = f"{heart_coords[idx]['x']}"
         y = f"{int(heart_coords[idx]['y'])+50}"
         flag = Flag(**flag_def)
@@ -280,7 +280,7 @@ def write_flags(flag_defs, flag_json_filename=FLAG_JSON_FILENAME):
             temp_entry[key] = value.to_json() if isinstance(value, VDOM) else value
         flag_json[entry['name']] = temp_entry
     with open(flag_json_filename, 'w') as fp:
-        json.dump(flag_json, fp)
+        json.dump(flag_json, fp, indent=2)
 
 
 def load_flags_iter(flag_json_filename=FLAG_JSON_FILENAME):
