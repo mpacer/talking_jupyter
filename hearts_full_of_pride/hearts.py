@@ -154,7 +154,7 @@ def gen_heart_array(flag_defs):
     flag_list = [heart.clipper()]
     coord_list = []
 
-    for idx, flag_def in enumerate(flag_defs[:len(heart_coords)+1]):
+    for idx, flag_def in enumerate(flag_defs[:len(heart_coords)]):
         x = f"{heart_coords[idx]['x']}"
         y = f"{int(heart_coords[idx]['y'])+50}"
         flag = Flag(**flag_def)
