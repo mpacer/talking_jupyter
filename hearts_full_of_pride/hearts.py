@@ -343,8 +343,13 @@ def animated_heart(stroke_color="white"):
 
 
 
-def animated_flag_heart(this_flag, stroke_color="grey"):
+def animated_flag_heart(this_flag=None, stroke_color="grey"):
     # this_flag = flag_dict[this_flag_name]
+    
+    if isinstance(this_flag, str):
+        flag_dict= load_flag_dict()
+        this_flag = flag_dict[this_flag]
+        
     heart = Clip(gen_heart())
     fade_out = gen_fade_out()
     anim_flag_heart = svg(heart.clipper(),
